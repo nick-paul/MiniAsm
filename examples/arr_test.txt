@@ -1,0 +1,25 @@
+;; Creates an array of ints from &0 to 1 starting at address 50
+;; Successful print: 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
+
+ld &0 15			; Number of elements
+
+ld A &0				; Starting number
+ld E 50				; Arr address
+ld H 32				; Space
+
+loop:					; Loop to create the array
+	ld &E A			; Load the value of A into the array
+	dec A				; Dec the value
+	inc E				; Next arr pos
+	jnz A loop	; Continue the loop until we get to 0
+
+	ld E 50			; Set E to the head of the array
+	ld C &0			; Counter for looping through the array
+
+printloop:
+	ld A &E			; Load the value stored at location E
+	prt A       ; Print the value
+	prtch H			; Print a space
+	dec C				; Dec the counter
+	inc E				; Next arr pos
+	jnz C printloop

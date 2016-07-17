@@ -1,0 +1,27 @@
+;; Hello world
+
+; Load "Hello world!" into the RAM
+ld &0 72    ; H
+ld &1 101   ; e
+ld &2 108   ; l
+ld &3 108   ; l
+ld &4 111   ; o
+ld &5 32    ; (space)
+ld &6 119   ; w
+ld &7 111   ; o
+ld &8 114   ; r
+ld &9 108   ; l
+ld &10 100  ; d
+ld &11 33   ; !
+
+ld C 12     ; length
+ld D 0      ; pointer to head
+
+pl:         ; print loop
+  ld A &D   ; Load the value pointed to by the head
+  prtch A
+  inc D
+
+  ld B D    ; If D-length != 0, we still have more chars to print
+  sub B C
+  jnz B pl

@@ -1,0 +1,5 @@
+;; Simple ld test
+
+ld A 2    ; Load 2 into register A
+ld B A    ; Load the contents of A into B
+prt B     ; Print the contents of B

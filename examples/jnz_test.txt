@@ -1,0 +1,19 @@
+; jnz test
+; success "BCD"
+ld A 65
+ld B 66
+ld C 67
+ld D 68
+
+ld E 1
+jnz E one
+prtch A   ;should't print A
+
+one:
+prtch B   ;should print B
+ld E 0
+jnz E two
+prtch C   ;should print C
+
+two:
+prtch D   ;should print D

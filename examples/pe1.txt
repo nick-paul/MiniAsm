@@ -1,0 +1,34 @@
+;; Project Euler #1
+;; Multiples of 3 or 5 below 1000
+;; 26 Feb 2016
+
+ld C 0          ; Current number to check
+ld D 1000       ; Max number to check
+ld E 3          ; Three
+ld F 5          ; Five
+ld G 0          ; Addition counter
+
+next:           ; Begin check of next number
+  inc C
+  ld A C
+  sub A D
+  jnz A three  ; If A is not zero, continue checking
+  jp done       ; If A is zero, we are done
+
+three:          ; For checking if C is a multiple of 3
+  ld A C
+  rem A E
+  jnz A five   ; If rem != 0, check 5
+  jp addIt      ; otherwise add it to the current total
+
+five:           ; For checking if C is a multiple of 5
+  ld A C
+  rem A F
+  jnz A next   ; If a%5 != 0, go to next, else, add it
+
+addIt:          ; Add C to the current total
+  add G C       ; Add current number to total
+  jp next       ; Continue with next number
+
+done:           ; Done, print the result
+  prt G
