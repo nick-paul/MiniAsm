@@ -11,7 +11,7 @@ Every command takes one or two arguments.
  - To access a register, use `A-H`
  - To reference a location in RAM, use `&N` where `N` is the address. Default address space is 0 - 1023
  - To access a location in RAM who's address is stored in a register use `&A`. *Replace `A` with any register name*.
- - Lines comments start with `;`
+ - Line comments start with `;`
  - Labels must be alpha characters and end with `:`. They must be on their own line.
  - To reference a label, just use the label name *(`jp` and `jnz`)*
 
