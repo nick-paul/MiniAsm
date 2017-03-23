@@ -184,6 +184,37 @@ bool isAlpha(string s) {
 	return true;
 }
 
+bool isChar(string s) {
+	return (s.size() == 3 || (s.size() == 4 && s[1] == '\\') )
+		&& s[0] == '\''
+		&& s[s.size()-1] == '\'';
+
+}
+
+int getChar(string s) {
+	if (s.size() == 3) {
+		return s[1];
+	} else {
+		char escaped = s[2];
+		switch (escaped) {
+		case '_':
+			return ' ';
+		case '\\':
+			return '\\';
+		case 't':
+			return '\t';
+		case 'n':
+			return '\n';
+		case 'r':
+			return '\n';
+		case 'b':
+			return '\n';
+		default:
+			return '?';
+		}
+	}
+}
+
 void remove_comments(string& in) {
 	int i = in.find_first_of(';');
 	if (i != string::npos)
@@ -214,6 +245,10 @@ int get_op(string& opname, int& type) {
 			throw err("Invalid label '" + opname + "'");
 		}
 	}
+	else if (isChar(opname)) {
+		type = OPSTATE_LIT;
+		return getChar(opname);
+	}
 	else if (opname[0] == '&'){
 		string opref = opname.substr(1, opname.length() - 1);
 		if (opref.length() == 1 && (opref[0] >= 'A' & opref[0] <= 'H')) {
@@ -233,7 +268,7 @@ int get_op(string& opname, int& type) {
 	}
 }
 
-line parse_line(string in) { //&
+line parse_line(string in) {
 	vector<string> strs = split_str(in, ' ');
 	int num_of_items = strs.size();
 

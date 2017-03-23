@@ -1,9 +1,9 @@
 ; jnz test
 ; success "BCD"
-ld A 65
-ld B 66
-ld C 67
-ld D 68
+ld A 'A'
+ld B 'B'
+ld C 'C'
+ld D 'D'
 
 ld E 1
 jnz E one
