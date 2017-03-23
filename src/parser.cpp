@@ -343,7 +343,7 @@ int main(int argc, char* argv[])
 			}
 
 			run();
-			cout << endl;
+			return 0;
 		}
 
 

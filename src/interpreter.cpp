@@ -158,7 +158,7 @@ namespace miniasm
 			}
 			lc++;
 		}
-		std::cout << std::endl << "program complete" << std::endl;
+		std::cout << std::endl;
 		return 1; //Success
 	}
 
