@@ -14,7 +14,7 @@
 #include <locale>
 
 
-#include "miniasm.h"
+#include "interpreter.h"
 
 using namespace std;
 using namespace miniasm;
@@ -424,4 +424,3 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
-

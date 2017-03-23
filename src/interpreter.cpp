@@ -1,9 +1,7 @@
-#pragma once
-
 #include <string>
 #include <iostream>
 
-#include "miniasm.h"
+#include "interpreter.h"
 
 namespace miniasm
 {
@@ -165,4 +163,3 @@ namespace miniasm
 	}
 
 };
-
