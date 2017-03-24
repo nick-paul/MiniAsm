@@ -1,5 +1,8 @@
 #include <string>
 #include <iostream>
+#include <unistd.h>
+#include <chrono>
+#include <thread>
 
 #include "interpreter.h"
 
@@ -25,6 +28,9 @@ namespace miniasm
 	const int JNZ = 13;
 	const int JP = 14;
 	const int EXIT = 15;
+	const int GETNUM = 16;
+	const int GETCH = 17;
+	const int SLP = 18;
 
 	//Arithmatic
 	const int ADD = 20;
@@ -116,9 +122,19 @@ namespace miniasm
 				regp(CL.op1, reg(CL.op2));	break;
 			case PRT:
 				std::cout << reg(CL.op1); break;
+			case GETNUM:
+				int int_in;
+				std::cin >> int_in;
+				regp(CL.op1, int_in); break;
+			case GETCH:
+				char char_in;
+				std::cin >> char_in;
+				regp(CL.op1, char_in); break;
 			case PRTCH:
 				//Print the value as a char
 				std::cout << (char)(reg(CL.op1)); break;
+			case SLP:
+				std::this_thread::sleep_for(std::chrono::milliseconds(reg(CL.op1))); break;
 			case JP:
 				lc = CL.op1 - 1; break;
 			case JNZ:

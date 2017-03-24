@@ -41,6 +41,9 @@ map<string, int> REG_REG;
 void init_maps() {
 	REG_NE["prt"] = PRT;
 	REG_NE["prtch"] = PRTCH;
+	REG_NE["get"] = GETNUM;
+	REG_NE["getch"] = GETCH;
+	REG_NE["slp"] = SLP;
 	REG_NE["inc"] = INC;
 	REG_NE["dec"] = DEC;
 

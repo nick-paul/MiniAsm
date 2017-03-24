@@ -1,0 +1,7 @@
+ld A 'A'
+ld B 'B'
+ld C 1000
+
+prtch A
+slp C
+prtch B

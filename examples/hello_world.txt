@@ -6,7 +6,7 @@ ld &1  'e'
 ld &2  'l'
 ld &3  'l'
 ld &4  'o'
-ld &5  '\_'
+ld &5  '\_' ; space
 ld &6  'w'
 ld &7  'o'
 ld &8  'r'

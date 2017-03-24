@@ -35,6 +35,9 @@ namespace miniasm {
 	extern const int JNZ;
 	extern const int JP;
 	extern const int EXIT;
+	extern const int GETNUM;
+	extern const int GETCH;
+	extern const int SLP;
 
 	//Arithmatic
 	extern const int ADD;
