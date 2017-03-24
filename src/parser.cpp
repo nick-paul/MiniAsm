@@ -187,6 +187,25 @@ bool isAlpha(string s) {
 	return true;
 }
 
+bool isReg(const string& s) {
+	return s.length() == 1
+		&& s[0] >= MIN_REGISTER_NAME
+		&& s[0] <= MAX_REGISTER_NAME;
+}
+
+bool isRegDeref(const string& s) {
+	return s.length() == 2
+		&& s[0] == '&'
+		&& s[1] >= MIN_REGISTER_NAME
+		&& s[1] <= MAX_REGISTER_NAME;
+
+}
+
+int regIndex(char c) {
+	return (int)(c - 'A');
+}
+
+
 bool isChar(string s) {
 	return (s.size() == 3 || (s.size() == 4 && s[1] == '\\') )
 		&& s[0] == '\''
@@ -229,9 +248,9 @@ int get_op(string& opname, int& type) {
 	if (opname == "") throw err("indent err: ");
 	type = OPSTATE_NE;
 
-	if (opname.length() == 1 && (opname[0] >= MIN_REGISTER_NAME & opname[0] <= MAX_REGISTER_NAME)) {
+	if (isReg(opname)) {
 		type = OPSTATE_REG;
-		return opname[0] - 'A'; //The addr for the register
+		return regIndex(opname[0]); //The addr for the register
 	}
 	else if (isNum(opname)) {
 		type = OPSTATE_LIT;
@@ -254,9 +273,9 @@ int get_op(string& opname, int& type) {
 	}
 	else if (opname[0] == '&'){
 		string opref = opname.substr(1, opname.length() - 1);
-		if (opref.length() == 1 && (opref[0] >= MIN_REGISTER_NAME & opref[0] <= MAX_REGISTER_NAME)) {
+		if (isReg(opref)) {
 			type = OPSTATE_RDF;
-			return opref[0] - 'A';
+			return regIndex(opref[0]);
 		}
 		else if (isNum(opref)) {
 			type = OPSTATE_ADR;
@@ -317,6 +336,8 @@ bool isLabel(string s) {
 	}
 }
 
+
+
 void assemble(string input) {
 	labels.clear();
 
@@ -348,6 +369,7 @@ void assemble(string input) {
 	for (int i = 0; i < line_count; i++) {
 		PRGM[i] = parse_line(str_lines[i]);
 	}
+
 	PRGM_LEN = line_count;
 }
 

@@ -1,0 +1,21 @@
+"Hello"
+
+reg = A
+
+
+ld P &A
+
+ld O 5
+ld &P O
+
+ld O 'H'
+inc P
+ld &P O
+
+ld O 'e'
+inc P
+ld &P O
+
+ld O 'l'
+inc P
+ld &P O
