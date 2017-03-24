@@ -121,7 +121,7 @@ namespace miniasm
 				//in the location in register op2
 				regp(CL.op1, reg(CL.op2));	break;
 			case PRT:
-				std::cout << reg(CL.op1); break;
+				std::cout << reg(CL.op1); std::cout << std::flush; break;
 			case GETNUM:
 				int int_in;
 				std::cin >> int_in;
@@ -132,7 +132,7 @@ namespace miniasm
 				regp(CL.op1, char_in); break;
 			case PRTCH:
 				//Print the value as a char
-				std::cout << (char)(reg(CL.op1)); break;
+				std::cout << (char)(reg(CL.op1)); std::cout << std::flush; break;
 			case SLP:
 				std::this_thread::sleep_for(std::chrono::milliseconds(reg(CL.op1))); break;
 			case JP:
