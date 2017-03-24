@@ -4,9 +4,15 @@
 
 namespace miniasm {
 
-	const int REG_SIZE = 8;
 	const int RAM_SIZE = 1024;
 	const int MAX_LINES = 1024;
+
+
+	//1234567890123456
+	//ABCDEFGHIJKLMNOP
+	const int REG_SIZE = 16;
+	const char MIN_REGISTER_NAME = 'A';
+	const char MAX_REGISTER_NAME = 'P';
 
 	struct line {
 		line(int a, int b, int c) :instr(a), op1(b), op2(c) {}

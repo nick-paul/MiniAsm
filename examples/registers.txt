@@ -1,0 +1,36 @@
+;; Test all registers
+;; correct output: "ABCDEFGHIJKLMNOP"
+
+ld A 'A'
+ld B 'B'
+ld C 'C'
+ld D 'D'
+ld E 'E'
+ld F 'F'
+ld G 'G'
+ld H 'H'
+ld I 'I'
+ld J 'J'
+ld K 'K'
+ld L 'L'
+ld M 'M'
+ld N 'N'
+ld O 'O'
+ld P 'P'
+
+prtch A
+prtch B
+prtch C
+prtch D
+prtch E
+prtch F
+prtch G
+prtch H
+prtch I
+prtch J
+prtch K
+prtch L
+prtch M
+prtch N
+prtch O
+prtch P

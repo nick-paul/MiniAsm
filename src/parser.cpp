@@ -229,7 +229,7 @@ int get_op(string& opname, int& type) {
 	if (opname == "") throw err("indent err: ");
 	type = OPSTATE_NE;
 
-	if (opname.length() == 1 && (opname[0] >= 'A' & opname[0] <= 'H')) {
+	if (opname.length() == 1 && (opname[0] >= MIN_REGISTER_NAME & opname[0] <= MAX_REGISTER_NAME)) {
 		type = OPSTATE_REG;
 		return opname[0] - 'A'; //The addr for the register
 	}
@@ -254,7 +254,7 @@ int get_op(string& opname, int& type) {
 	}
 	else if (opname[0] == '&'){
 		string opref = opname.substr(1, opname.length() - 1);
-		if (opref.length() == 1 && (opref[0] >= 'A' & opref[0] <= 'H')) {
+		if (opref.length() == 1 && (opref[0] >= MIN_REGISTER_NAME & opref[0] <= MAX_REGISTER_NAME)) {
 			type = OPSTATE_RDF;
 			return opref[0] - 'A';
 		}
