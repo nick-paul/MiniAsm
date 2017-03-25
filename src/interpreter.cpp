@@ -42,6 +42,8 @@ namespace miniasm
 	const int DEC = 26;
 	const int AND = 27;
 	const int OR = 28;
+	const int EQ = 29;
+	const int NOT = 30;
 
 
 	int PRGM_LEN; //Program Length
@@ -162,10 +164,15 @@ namespace miniasm
 			case OR:
 				//bitwise and
 				regp(CL.op1, reg(CL.op1) | reg(CL.op2)); break;
+			case EQ:
+				//equals
+				regp(15, reg(CL.op1) == reg(CL.op2)); break;
 			case INC:
 				regp(CL.op1, reg(CL.op1) + 1); break;
 			case DEC:
 				regp(CL.op1, reg(CL.op1) - 1); break;
+			case NOT:
+				regp(CL.op1, reg(CL.op1) == 0); break;
 			case EXIT:
 				std::cout << std::endl << "program exited with code " << CL.op1 << std::endl;
 				return 1; //Success

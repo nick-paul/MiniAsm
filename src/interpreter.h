@@ -44,6 +44,7 @@ namespace miniasm {
 	extern const int GETNUM;
 	extern const int GETCH;
 	extern const int SLP;
+	extern const int NOT;
 
 	//Arithmatic
 	extern const int ADD;
@@ -55,6 +56,7 @@ namespace miniasm {
 	extern const int DEC;
 	extern const int AND;
 	extern const int OR;
+	extern const int EQ;
 
 
 	extern int REG[]; //A-H

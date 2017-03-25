@@ -52,6 +52,7 @@ void init_maps() {
 	REG_NE["slp"] = SLP;
 	REG_NE["inc"] = INC;
 	REG_NE["dec"] = DEC;
+	REG_NE["not"] = NOT;
 
 	ADR_ADR["ld"] = LD_AA;
 
@@ -79,6 +80,7 @@ void init_maps() {
 	REG_REG["rem"] = REM;
 	REG_REG["and"] = AND;
 	REG_REG["or"] = OR;
+	REG_REG["eq"] = EQ;
 
 
 }
@@ -479,11 +481,6 @@ void assemble(string input) {
 
 
 	}
-
-	// //Compile Lines
-	// for (int i = 0; i < line_count; i++) {
-	// 	PRGM[i] = parse_line(str_lines[i]);
-	// }
 
 	int current_line = 0;
 	for (int i = 0; i < str_lines.size(); i++)
