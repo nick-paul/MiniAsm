@@ -1,19 +1,19 @@
-ld A 10
-str &A "Nick!
+; Print the string "Nick!"
+
+ld A 100
+str &A "Hello world!
 
 ld L &A ; length
 ld C 0  ; count
 
-prt L
-
 loop:
-inc C
-inc A
+  inc C
+  inc A
 
-ld F &A
+  ld F &A
 
-prtch F
+  prtch F
 
-ld D L
-sub D C
-jnz D loop
+  ld D L
+  sub D C
+  jnz D loop
