@@ -1,21 +1,36 @@
-"Hello"
-
-reg = A
+str &A "Hello"
 
 
+=====[ gets compiled to ]====
+
+; Starting address
 ld P &A
 
+; Length
 ld O 5
 ld &P O
 
+; Load each character
+
+inc P
 ld O 'H'
-inc P
 ld &P O
 
+inc P
 ld O 'e'
-inc P
 ld &P O
 
-ld O 'l'
 inc P
+ld O 'l'
 ld &P O
+
+inc P
+ld O 'l'
+ld &P O
+
+inc P
+ld O 'o'
+ld &P O
+
+; resulting memory
+[ .. | 5 | 'H' | 'e' | 'l' | 'l' | 'o' | .. ]
