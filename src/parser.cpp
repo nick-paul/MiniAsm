@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <iomanip>
 #include <map>
 #include <stdlib.h>
 #include <algorithm>
@@ -25,7 +26,12 @@ const int OPSTATE_LIT = 2;
 const int OPSTATE_REG = 3;
 const int OPSTATE_RDF = 4; //Reg deref
 
+const int NO_LABEL = -1;
+
 map<string, int> labels;
+
+// label name -> list of lines that reference this label
+map<string, vector<int>> label_refs;
 
 map<string, int> REG_NE;
 map<string, int> REG_ADR;
@@ -167,6 +173,9 @@ int get_instr(string s, int op1_s, int op2_s) {
 	throw err("operator does not exist");
 }
 
+bool isWhitespace(char c) {
+	return c == '\t' || c == ' ';
+}
 
 bool isNum(string s) {
 	for (int i = 0; i < s.length(); i++) {
@@ -187,11 +196,16 @@ bool isAlpha(string s) {
 	return true;
 }
 
-bool isReg(const string& s) {
-	return s.length() == 1
-		&& s[0] >= MIN_REGISTER_NAME
-		&& s[0] <= MAX_REGISTER_NAME;
+bool isReg(char c) {
+	return c >= MIN_REGISTER_NAME
+		&& c <= MAX_REGISTER_NAME;
 }
+
+bool isReg(const string& s) {
+	return s.length() == 1 && isReg(s[0]);
+}
+
+
 
 bool isRegDeref(const string& s) {
 	return s.length() == 2
@@ -244,7 +258,7 @@ void remove_comments(string& in) {
 	in = trim(in);
 }
 
-int get_op(string& opname, int& type) {
+int get_op(string& opname, int& type, int current_line) {
 	if (opname == "") throw err("indent err: ");
 	type = OPSTATE_NE;
 
@@ -259,13 +273,15 @@ int get_op(string& opname, int& type) {
 	}
 	else if (isAlpha(opname)) {
 		type = OPSTATE_LIT;
-		map<string, int>::iterator ret = labels.find(opname);
-		if (ret != labels.end()) {
-			return ret->second;
-		}
-		else {
-			throw err("Invalid label '" + opname + "'");
-		}
+		label_refs[opname].push_back(current_line);
+		return NO_LABEL;
+		//map<string, int>::iterator ret = labels.find(opname);
+		//if (ret != labels.end()) {
+		//	return ret->second;
+		//}
+		//else {
+		//	throw err("Invalid label '" + opname + "'");
+		//}
 	}
 	else if (isChar(opname)) {
 		type = OPSTATE_LIT;
@@ -290,7 +306,7 @@ int get_op(string& opname, int& type) {
 	}
 }
 
-line parse_line(string in) {
+line parse_line(string in, int current_line) {
 	vector<string> strs = split_str(in, ' ');
 	int num_of_items = strs.size();
 
@@ -302,9 +318,9 @@ line parse_line(string in) {
 
 	int op1_type = OPSTATE_NE, op2_type = OPSTATE_NE;
 	try {
-		out.op1 = get_op(strs[1], op1_type);
+		out.op1 = get_op(strs[1], op1_type, current_line);
 		if (num_of_items > 2) {
-			out.op2 = get_op(strs[2], op2_type);
+			out.op2 = get_op(strs[2], op2_type, current_line);
 		}
 		out.instr = get_instr(strs[0], op1_type, op2_type);
 	}
@@ -314,6 +330,72 @@ line parse_line(string in) {
 
 	return out;
 
+}
+
+void compileStrLit(const string& str, int reg_in, int& idx) {
+	int reg_P = regIndex('P');
+	int reg_O = regIndex('O');
+	int str_len = str.length();
+
+	// Starting address
+	// ld P A  ; where A is reg_in
+	PRGM[idx++] = line(LD_RR, reg_P, reg_in);
+
+	// First is the string length
+	// ld O n   ; where n is the str len
+	// ld &A O
+	PRGM[idx++] = line(LD_RL, reg_O, str_len);
+	PRGM[idx++] = line(LD_DR, reg_in, reg_O);
+
+
+	// ld &A 12
+
+	// Load each character
+	// inc P
+	// ld O c   ; where c is the ith char
+	// ld &P O
+	for (int i = 0; i < str.length(); i++) {
+		PRGM[idx++] = line(INC, reg_P, 0);
+		PRGM[idx++] = line(LD_RL, reg_O, (int)str[i]);
+		PRGM[idx++] = line(LD_DR, reg_P, reg_O);
+	}
+}
+
+bool isStrLit(const string& str) {
+	if (str.length() < 8)
+		return false;
+
+	// 01234567890
+	// str &A "abcde
+	string pattern = "str &A \"";
+
+	for (int i = 0; i < pattern.length(); i++) {
+		if (i == 5) {
+			if (!isReg(str[i])) {
+				return false;
+			}
+		}
+		else if (pattern[i] != str[i]) {
+			return false;
+		}
+	}
+
+	return true;
+
+}
+
+string parseStrLit(const string& str, int& reg) {
+	// 01234567890
+	// str &A "abcde
+	if (!isStrLit(str)) {
+		throw err("Invalid str literal: " + str);
+	}
+
+	reg = regIndex(str[5]);
+
+	string lit = str.substr(8);
+
+	return str.substr(8);
 }
 
 
@@ -336,7 +418,40 @@ bool isLabel(string s) {
 	}
 }
 
+void addLabel(const string& str, int line_count) {
+	string s = str.substr(0, str.length() - 1);
+	labels[s] = line_count;
+}
 
+void compileLine(const string& line, int& line_count) {
+	if (isStrLit(line)) {
+		int reg;
+		string str_lit = parseStrLit(line, reg);
+		compileStrLit(str_lit, reg, line_count);
+	} else if (isLabel(line)) {
+		addLabel(line, line_count);
+	} else {
+		PRGM[line_count] = parse_line(line, line_count);
+		line_count++;
+	}
+}
+
+void applyLabels() {
+ 	for (auto const& x : label_refs) {
+    	int label = labels[x.first];
+		vector<int> to_label = x.second;
+
+		for (int i = 0; i < to_label.size(); i++) {
+			int k = to_label[i];
+
+			if (PRGM[k].op1 == NO_LABEL)
+				PRGM[k].op1 = label;
+
+			if (PRGM[k].op2 == NO_LABEL)
+				PRGM[k].op2 = label;
+		}
+	}
+}
 
 void assemble(string input) {
 	labels.clear();
@@ -351,9 +466,9 @@ void assemble(string input) {
 		remove_comments(str_lines_pre[i]);
 
 		if (str_lines_pre[i].length() != 0) {
-			//Is it a label?
+			//Is it a label?, add it to the label map
 			if (isLabel(str_lines_pre[i])) {
-				labels[str_lines_pre[i].substr(0, str_lines_pre[i].length() - 1)] = line_count;
+				str_lines.push_back(str_lines_pre[i]);
 				continue;
 			}
 			else {
@@ -365,14 +480,42 @@ void assemble(string input) {
 
 	}
 
-	//Compile Lines
-	for (int i = 0; i < line_count; i++) {
-		PRGM[i] = parse_line(str_lines[i]);
-	}
+	// //Compile Lines
+	// for (int i = 0; i < line_count; i++) {
+	// 	PRGM[i] = parse_line(str_lines[i]);
+	// }
 
-	PRGM_LEN = line_count;
+	int current_line = 0;
+	for (int i = 0; i < str_lines.size(); i++)
+		compileLine(str_lines[i], current_line);
+
+	applyLabels();
+
+	PRGM_LEN = current_line;
 }
 
+void debugPrt() {
+	for (int i = 0; i < PRGM_LEN; i++) {
+		cout << setw(3) << i << "|" << setw(5) << PRGM[i].instr << setw(5) << PRGM[i].op1 << setw(5) << PRGM[i].op2 << endl;
+	}
+	cout << "==================" << endl;
+}
+void cleanMem() {
+	for (int i = 0; i < RAM_SIZE; i++)
+		RAM[i] = 0;
+
+	for (int i = 0; i < REG_SIZE; i++)
+		REG[i] = 0;
+}
+
+void printMem() {
+	for (int i = 0; i < REG_SIZE; i++) {
+		cout << setw(2) << (char)(i + 'A') << ": " << REG[i] << "('" << (char)REG[i] << "')" << endl;
+	}
+	for (int i = 0; i < 20; i++) {
+		cout << setw(5) << i << "] " << RAM[i] << " ('" << (char)RAM[i] << "')" << endl;
+	}
+}
 
 int main(int argc, char* argv[])
 {
@@ -402,7 +545,12 @@ int main(int argc, char* argv[])
 				cout << e.msg << endl;
 			}
 
+			//debugPrt();
+
+			cleanMem();
 			run();
+
+			//printMem();
 			return 0;
 		}
 
