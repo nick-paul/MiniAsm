@@ -48,3 +48,27 @@ Every command takes one or two arguments.
   - **or** `reg1 reg2` bitwise or the value stored in `reg2` with the value in `reg1`
   - **inc** `reg` increment the value in `reg`
   - **dec** `reg` decrement the value in `reg`
+  - **str** `adr` `string_lit` store the string at the given address
+  
+
+## Strings
+
+The `str` command takes an address and a string literal as arguments. String literals begin with a `"` and end with a newline Strings are stored in memory as
+
+```
+      addr   addr+1   addr+2   ...   addr+N 
+... | N    | char1  | char2  | ... | charN  | ...
+```
+
+For example, 
+
+```
+ld A 100
+str &A "ABC
+```
+would result in
+
+```
+addr:  100   101   102   103   ...
+ ... | 3   | 65  | 66  | 67  | ...
+```
