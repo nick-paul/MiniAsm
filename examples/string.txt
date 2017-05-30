@@ -1,4 +1,4 @@
-; Print the string "Nick!"
+; Print the string "Hello world!"
 
 ld A 100
 str &A "Hello world!
